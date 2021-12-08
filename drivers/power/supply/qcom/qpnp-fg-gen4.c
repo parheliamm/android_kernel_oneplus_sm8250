@@ -4608,6 +4608,28 @@ static int fg_psy_get_property(struct power_supply *psy,
 				pval->intval = (int)temp;
 		}
 		break;
+	case POWER_SUPPLY_PROP_FULL_AVAILABLE_CAPACITY:
+		if (!get_extern_fg_regist_done() && get_extern_bq_present())
+                        pval->intval = -EINVAL;
+                else if (fg->use_external_fg && external_fg && external_fg->get_batt_full_available_capacity)
+                        pval->intval = external_fg->get_batt_full_available_capacity();
+                else {
+                        rc = fg_gen4_get_learned_capacity(chip, &temp);
+                        if (!rc)
+                                pval->intval = (int)temp;
+                }
+		break;
+	case POWER_SUPPLY_PROP_CHARGE_FULL_CHARGE_CAPACITY_FILTERED:
+                if (!get_extern_fg_regist_done() && get_extern_bq_present())
+                        pval->intval = -EINVAL;
+                else if (fg->use_external_fg && external_fg && external_fg->get_batt_full_available_capacity_filtered)
+                        pval->intval = external_fg->get_batt_full_available_capacity_filtered();
+                else {
+                        rc = fg_gen4_get_learned_capacity(chip, &temp);
+                        if (!rc)
+                                pval->intval = (int)temp;
+                }
+		break;
 	case POWER_SUPPLY_PROP_REMAINING_CAPACITY:
 		if (!get_extern_fg_regist_done() && get_extern_bq_present())
 			pval->intval = DEFALUT_BATT_TEMP;
@@ -4691,6 +4713,7 @@ static int fg_psy_get_property(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG:
 		rc = ttf_get_time_to_empty(chip->ttf, &pval->intval);
 		break;
+#if 0
 	case POWER_SUPPLY_PROP_TIME_TO_FULL_NOW:
 		if (fg->iskebab) {
 			if (fg->use_external_fg && external_fg
@@ -4702,6 +4725,7 @@ static int fg_psy_get_property(struct power_supply *psy,
 			rc = ttf_get_time_to_full(chip->ttf, &pval->intval);
 		pval->intval = pval->intval > 0 ? pval->intval : 1;
 		break;
+#endif
 	case POWER_SUPPLY_PROP_CC_STEP:
 		if ((chip->ttf->cc_step.sel >= 0) &&
 				(chip->ttf->cc_step.sel < MAX_CC_STEPS)) {
@@ -4918,6 +4942,8 @@ static enum power_supply_property fg_psy_props[] = {
 	POWER_SUPPLY_PROP_CHARGE_NOW_RAW,
 	POWER_SUPPLY_PROP_CHARGE_NOW,
 	POWER_SUPPLY_PROP_CHARGE_FULL,
+	POWER_SUPPLY_PROP_FULL_AVAILABLE_CAPACITY,
+	POWER_SUPPLY_PROP_CHARGE_FULL_CHARGE_CAPACITY_FILTERED,
 	POWER_SUPPLY_PROP_CHARGE_COUNTER,
 	POWER_SUPPLY_PROP_CHARGE_COUNTER_SHADOW,
 	POWER_SUPPLY_PROP_CYCLE_COUNTS,
@@ -4927,7 +4953,9 @@ static enum power_supply_property fg_psy_props[] = {
 	POWER_SUPPLY_PROP_DEBUG_BATTERY,
 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
 	POWER_SUPPLY_PROP_TIME_TO_FULL_AVG,
+#if 0
 	POWER_SUPPLY_PROP_TIME_TO_FULL_NOW,
+#endif
 	POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG,
 	POWER_SUPPLY_PROP_CC_STEP,
 	POWER_SUPPLY_PROP_CC_STEP_SEL,

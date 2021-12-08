@@ -2319,8 +2319,11 @@ static int qg_psy_get_property(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_BATT_AGE_LEVEL:
 		pval->intval = chip->batt_age_level;
 		break;
+	case POWER_SUPPLY_PROP_FG_TYPE:
+		pval->intval = chip->qg_mode;
+		break;
 	default:
-		pr_err("Unsupported property %d\n", psp);
+		pr_debug("Unsupported property %d\n", psp);
 		break;
 	}
 
@@ -2383,6 +2386,7 @@ static enum power_supply_property qg_psy_props[] = {
 	POWER_SUPPLY_PROP_POWER_NOW,
 	POWER_SUPPLY_PROP_SCALE_MODE_EN,
 	POWER_SUPPLY_PROP_BATT_AGE_LEVEL,
+	POWER_SUPPLY_PROP_FG_TYPE,
 };
 
 static const struct power_supply_desc qg_psy_desc = {
