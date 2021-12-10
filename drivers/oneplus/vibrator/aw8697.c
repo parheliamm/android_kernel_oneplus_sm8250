@@ -804,7 +804,7 @@ static int aw8697_haptic_play_go(struct aw8697 *aw8697, bool flag)
         aw8697->interval_us = (aw8697->current_time.tv_sec-aw8697->pre_enter_time.tv_sec) * 1000000
           + (aw8697->current_time.tv_usec-aw8697->pre_enter_time.tv_usec);
        if (aw8697->interval_us < 2000) {
-           pr_info("aw8697->interval_us t=%ld\n",aw8697->interval_us);
+           pr_info("aw8697->interval_us t=%u\n",aw8697->interval_us);
            mdelay(2);
        }
     }
@@ -3658,7 +3658,7 @@ static ssize_t aw8697_activate_store(struct device *dev,
     if (val != 0 && val != 1)
         return count;
     if (val_pre != val)
-       pr_info("%s: value=%d\n", __FUNCTION__, val);
+       pr_debug("%s: value=%d\n", __FUNCTION__, val);
     val_pre = val;
     mutex_lock(&aw8697->lock);
 /*for type Android OS's vibrator 20181225 begin*/
@@ -3687,7 +3687,7 @@ static ssize_t aw8697_activate_store(struct device *dev,
 		aw8697_haptic_set_rtp_aei(aw8697, false);
 		aw8697_interrupt_clear(aw8697);
 		aw8697->sin_add_flag = 0;
-		pr_info("%s: value=%d\n", __FUNCTION__, val);
+		pr_debug("%s: value=%d\n", __FUNCTION__, val);
 	} else {
 			if (check_factory_mode()) {
 				aw8697->rtp_file_num = FACTORY_MODE_AT_MODE_RTP_NUMBER;//Number for AT vibration
@@ -4876,7 +4876,7 @@ const char *buf, size_t count)
 	int rc = 0;
 
 	rc = kstrtouint(buf, 0, &val);
-	pr_info("%s: vqal:\n", __func__, val);
+	pr_info("%s: val:%d\n", __func__, val);
 	if (rc < 0)
 	return rc;
 	mutex_lock(&aw8697->lock);
@@ -5142,7 +5142,7 @@ static ssize_t aw8697_haptic_audio_tp_input_store(struct device *dev, struct dev
 	haptic_audio = &(aw8697->haptic_audio);
 
 	if (count != sizeof(struct tp_input_info)) {
-		pr_err("%s: unmatch buf len, node_len=%d, struct len=%d\n",
+		pr_err("%s: unmatch buf len, node_len=%lu, struct len=%lu\n",
 			__func__, count, sizeof(struct tp_input_info));
 		return count;
 	}
@@ -5322,7 +5322,7 @@ static ssize_t aw8697_haptic_audio_ai_input_store(struct device *dev, struct dev
 	haptic_audio = &(aw8697->haptic_audio);
 
 	if (count != sizeof(struct ai_trust_zone)) {
-		pr_err("%s: unmatch buf len, node_len=%d, struct len=%d\n",
+		pr_err("%s: unmatch buf len, node_len=%lu, struct len=%lu\n",
 			__func__, count, sizeof(struct ai_trust_zone));
 		return count;
 	}
@@ -5449,7 +5449,7 @@ static ssize_t aw8697_haptic_audio_tp_size_store(struct device *dev, struct devi
 	tp_size = &(aw8697->haptic_audio.tp_size);
 
 	if (count != sizeof(struct haptic_audio_tp_size)) {
-		pr_err("%s: unmatch buf len, node_len=%d, struct len=%d\n",
+		pr_err("%s: unmatch buf len, node_len=%lu, struct len=%lu\n",
 			__func__, count, sizeof(struct haptic_audio_tp_size));
 		return count;
 	}
@@ -5883,19 +5883,19 @@ static int aw8697_vibrator_init(struct aw8697 *aw8697)
 static void aw8697_interrupt_clear(struct aw8697 *aw8697)
 {
     unsigned char reg_val = 0;
-    pr_info("%s enter\n", __func__);
+    pr_debug("%s enter\n", __func__);
     aw8697_i2c_read(aw8697, AW8697_REG_SYSINT, &reg_val);
-    pr_info("%s: reg SYSINT=0x%x\n", __func__, reg_val);
+    pr_debug("%s: reg SYSINT=0x%x\n", __func__, reg_val);
 }
 
 static void aw8697_interrupt_setup(struct aw8697 *aw8697)
 {
     unsigned char reg_val = 0;
 
-    pr_info("%s enter\n", __func__);
+    pr_debug("%s enter\n", __func__);
 
     aw8697_i2c_read(aw8697, AW8697_REG_SYSINT, &reg_val);
-    pr_info("%s: reg SYSINT=0x%x\n", __func__, reg_val);
+    pr_debug("%s: reg SYSINT=0x%x\n", __func__, reg_val);
 
     /* edge int mode */
     aw8697_i2c_write_bits(aw8697, AW8697_REG_DBGCTRL,
